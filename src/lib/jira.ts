@@ -68,7 +68,7 @@ export default class JiraClient {
 
         res.on('end', () => {
           if (res.statusCode < 200 || res.statusCode > 299) {
-            return reject(resData)
+            return reject(JSON.parse(resData))
           }
 
           resolve(JSON.parse(resData))

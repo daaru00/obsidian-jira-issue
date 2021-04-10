@@ -1,10 +1,26 @@
+.jira-issues-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.jira-issue-grid-item {
+    flex-grow: 1;
+    padding: 1em;
+    max-width: 300px;
+    min-width: 300px;
+}
+
 .jira-issue {
-    padding: 0 5px;
     color: var(--text-normal);
     background-color: var(--background-primary-alt);
-    max-width: 500px;
-    margin: auto;
     border-radius: 5px;
+    padding: 0.4em;
+    height: 100%;
+}
+.jira-issue.in-error {
+    color: var(--text-error);
+    text-align: center;
+    padding: 1em;
 }
 
 .jira-issue-details span {

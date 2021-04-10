@@ -66,13 +66,24 @@ export default class JiraIssuePlugin extends Plugin {
 	}
 
 	async issueBlockProcessor(content: string, el: HTMLElement): Promise<void> {
-		const container = window.createDiv()
-		container.addClass('jira-issue')
+		el.empty()
 
-		new IssueWidget(this, container)
-			.setIssueIdentifier(content.replace(new RegExp(os.EOL, 'g'), ''))
+		const container = el.createDiv()
+		container.addClass('jira-issues-grid')
 
-		el.replaceWith(container)
+		const issues = content.split(os.EOL).filter(key => key.trim().length > 0)
+		console.log(issues);
+		
+		for (const key of issues) {
+			const issueWidgetContainer = container.createDiv()
+			issueWidgetContainer.addClass('jira-issue-grid-item')
+			
+			const issueWidget = issueWidgetContainer.createDiv()
+			issueWidget.addClass('jira-issue')
+
+			new IssueWidget(this, issueWidget)
+				.setIssueIdentifier(key)
+		}
 	}
 
 	async loadSettings(): Promise<void> {

@@ -35,8 +35,9 @@ export default class IssueWidget {
   async loadIssue(): Promise<void> {
     try {
       this.issue = await this.plugin.jiraClient.getIssueDetails(this.jiraIssueKey)
-    } catch (error) {
-      this.el.innerHTML = error.toString()
+    } catch ({ errorMessages }) {
+      this.el.innerHTML = errorMessages.join(' ')
+      this.el.addClass('in-error')
       return
     }
 
@@ -49,6 +50,10 @@ export default class IssueWidget {
   }
 
   showIssueDetails(): void {
+    if (!this.issue) {
+      return
+    }
+
     this.el.createSpan({
       text: `${this.issue.summary}`
     })
@@ -75,6 +80,10 @@ export default class IssueWidget {
   }
 
   showTimerControl(): void {
+    if (!this.issue) {
+      return
+    }
+    
     if (!this.timerControlContainer) {
       this.timerControlContainer = this.el.createDiv({ cls: ['jira-issue-timer-control'] })
     } else {
