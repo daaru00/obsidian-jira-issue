@@ -1,0 +1,10 @@
+{
+    "id": "obsidian-jira-issue",
+    "name": "Jira Issue",
+    "version": "0.1.0",
+    "minAppVersion": "0.11.9",
+    "description": "This plugin to show Jira issue details from key or id",
+    "author": "Fabio Gollinucci",
+    "authorUrl": "https://github.com/daaru00",
+    "isDesktopOnly": true
+}

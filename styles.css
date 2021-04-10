@@ -1,0 +1,37 @@
+.jira-issue {
+    padding: 0 5px;
+    color: var(--text-normal);
+    background-color: var(--background-primary-alt);
+    max-width: 500px;
+    margin: auto;
+    border-radius: 5px;
+}
+
+.jira-issue-details span {
+    font-size: 0.6em;
+}
+
+.jira-issue-details span:not(:last-child) {
+    margin-right: 5px;
+}
+
+.jira-issue-time-bar-container {
+    height: 1em;
+    background-color: var(--text-normal);
+    overflow: hidden;
+    margin-top: 0.2em;
+}
+
+.jira-issue-time-bar {
+    height: 100%;
+    background-color: var(--text-accent-hover);
+}
+
+.jira-issue-timer-control { 
+    display: inline-block;
+    width: 100%;
+}
+
+.jira-issue-timer-control button {
+    float: right;
+}
