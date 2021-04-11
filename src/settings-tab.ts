@@ -36,13 +36,11 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		
-		let apiTokenInput: HTMLInputElement
 		new Setting(containerEl)
 			.setName('API Token')
 			.setDesc('The API token generated from Atlassian account')
 			.addText(text => {
-				apiTokenInput = text.inputEl
-				apiTokenInput.type = 'password'
+				text.inputEl.type = 'password'
 				text.setValue(this.plugin.settings.token)
 					.setPlaceholder("xxxxxxxxxxxxxxxxxxxxx")
 					.onChange(async (value) => {
@@ -50,13 +48,5 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			})
-			.addExtraButton(button => button
-				.onClick(() => {
-					if (apiTokenInput.type === 'text') {
-						apiTokenInput.type = 'password'
-					} else {
-						apiTokenInput.type = 'text'
-					}
-				}))
 	}
 }

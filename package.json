@@ -1,7 +1,7 @@
 {
-    "name": "obsidian-aws-s3-sync",
+    "name": "obsidian-jira-issue",
     "version": "0.1.0",
-    "description": "Obsidian Plugin for Jira issue details and worklog",
+    "description": "Obsidian Plugin for Jira issue details",
     "main": "main.js",
     "scripts": {
         "dev": "rollup --config rollup.config.js -w",

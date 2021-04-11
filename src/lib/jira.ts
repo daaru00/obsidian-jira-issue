@@ -111,20 +111,6 @@ export default class JiraClient {
     }
   }
 
-  async getIssueWorkLogs(jiraIssueIdOrKey: string): Promise<JiraWorkLog[]> {
-    const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey, 'worklog'))
-    res.worklogs = res.worklogs || []
-
-    return res.worklogs.map((worklog: any): JiraWorkLog => ({
-      id: worklog.id,
-      isOwner: worklog.author.emailAddress === this.settings.email,
-      timeSpent: worklog.timeSpent,
-      timeSpentSeconds: worklog.timeSpentSeconds,
-      startedAt: worklog.started ? new Date(worklog.started) : null,
-      updatedAt: worklog.updated ? new Date(worklog.updated) : null
-    }))
-  }
-
   async getIssueTransitions(jiraIssueIdOrKey: string): Promise<JiraIssueTransitions[]> {
     const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey, 'transitions'))
     res.transitions = res.transitions || []

@@ -15,11 +15,6 @@ export default class IssueWidget {
   constructor(plugin: JiraIssuePlugin, el: HTMLElement) {
     this.plugin = plugin
     this.el = el
-    this.plugin.timeManager.on('timer-start', this.showTimerControl.bind(this))
-    this.plugin.timeManager.on('timer-paused', this.showTimerControl.bind(this))
-    this.plugin.timeManager.on('timer-resumed', this.showTimerControl.bind(this))
-    this.plugin.timeManager.on('timer-reset', this.showTimerControl.bind(this))
-    this.plugin.timeManager.on('timer-deleted', this.showTimerControl.bind(this))
   }
 
   getIssueIdentifier(): string {
@@ -50,10 +45,6 @@ export default class IssueWidget {
     this.showTimeStats()
 
     await this.loadIssueTransitions()
-
-    this.showTimerControl()
-
-    //await this.loadTimeSpent()
   }
 
   showIssueDetails(): void {
@@ -84,52 +75,6 @@ export default class IssueWidget {
 
     const bar = container.createDiv({ cls: ['jira-issue-time-bar'] })
     bar.style.width = Math.ceil(percentage) + '%'
-  }
-
-  showTimerControl(): void {
-    if (!this.issue) {
-      return
-    }
-    
-    if (!this.timerControlContainer) {
-      this.timerControlContainer = this.el.createDiv({ cls: ['jira-issue-timer-control'] })
-    } else {
-      this.timerControlContainer.empty()
-    }
-
-    const timer = this.plugin.timeManager.getById(this.jiraIssueKey)
-    if (!timer) {
-      new ButtonComponent(this.timerControlContainer)
-        .setButtonText("start")
-        .onClick(() => {
-          const timer = this.plugin.timeManager.createNew(this.jiraIssueKey)
-          timer.start()
-        })
-    } else {
-      if (timer.isRunning) {
-        new ButtonComponent(this.timerControlContainer)
-          .setButtonText("pause")
-          .onClick(() => {
-            timer.pause()
-          })
-      } else {
-        new ButtonComponent(this.timerControlContainer)
-          .setButtonText("resume")
-          .onClick(() => {
-            timer.resume()
-          })
-      }
-      new ButtonComponent(this.timerControlContainer)
-        .setButtonText("reset")
-        .onClick(() => {
-          timer.reset()
-        })
-      new ButtonComponent(this.timerControlContainer)
-        .setButtonText("save")
-        .onClick(() => {
-          timer.save()
-        })
-    }
   }
 
   async loadIssueTransitions(): Promise<void> {
@@ -163,16 +108,5 @@ export default class IssueWidget {
         const modal = new TransitionModal(this.plugin, this.jiraIssueKey)
         modal.open()
       })
-  }
-
-  async loadTimeSpent(): Promise<void> {
-    const worklogs = await this.plugin.jiraClient.getIssueWorkLogs(this.issue.id)
-    const list = this.el.createEl('ul')
-
-    for (const worklog of worklogs) {
-      list.createEl('li', {
-        text: worklog.timeSpent
-      })
-    }
   }
 }
