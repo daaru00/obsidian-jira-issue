@@ -9,6 +9,7 @@ export interface JiraIssue {
   key: string;
   project: JiraProject,
   summary: string;
+  status: string;
   timeTracking: JiraIssueTracking;
 }
 
@@ -25,6 +26,11 @@ export interface JiraIssueTracking {
   remainingEstimateSeconds: number;
   timeSpent: string;
   timeSpentSeconds: number;
+}
+
+export interface JiraIssueTransitions {
+  id: string;
+  name: string;
 }
 
 export interface JiraWorkLog {
@@ -89,8 +95,8 @@ export default class JiraClient {
   }
 
   async getIssueDetails(jiraIssueIdOrKey: string): Promise<JiraIssue> {
-    const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey)+'?fields=id,key,summary,timetracking,project')
-
+    const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey)+'?fields=id,key,summary,timetracking,project,status')
+    
     return {
       id: res.id,
       key: jiraIssueIdOrKey,
@@ -100,6 +106,7 @@ export default class JiraClient {
         name: res.fields.project.name,
       },
       summary: res.fields.summary,
+      status: res.fields.status.name,
       timeTracking: res.fields.timetracking
     }
   }
@@ -118,7 +125,43 @@ export default class JiraClient {
     }))
   }
 
-  async createWorkLog(timer: Timer): Promise<void> {
-    console.log(timer);
+  async getIssueTransitions(jiraIssueIdOrKey: string): Promise<JiraIssueTransitions[]> {
+    const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey, 'transitions'))
+    res.transitions = res.transitions || []
+
+    return res.transitions.map((transition: any): JiraIssueTransitions => ({
+      id: transition.id,
+      name: transition.name,
+    }))
+  }
+
+  async transitionIssue(jiraIssueIdOrKey: string, transitionId: string): Promise<void> {
+    await this.callApi('POST', join('issue', jiraIssueIdOrKey, 'transitions'), {
+      transition: {
+        id: transitionId
+      }
+    })
+  }
+
+  async createWorkLog(jiraIssueIdOrKey: string, timer: Timer, comment?: string): Promise<void> {
+    await this.callApi('POST', join('issue', jiraIssueIdOrKey, 'worklog'), {
+      timeSpentSeconds: timer.getDuration(),
+      started: timer.startedAt,
+      comment: comment ? {
+        type: "doc",
+        version: 1,
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                text: comment,
+                type: "text"
+              }
+            ]
+          }
+        ]
+      } : undefined,
+    })
   }
 }

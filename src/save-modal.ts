@@ -28,7 +28,7 @@ export default class SaveModal extends Modal {
   }
 
   async saveAndClose(): Promise<void> {
-    await this.plugin.jiraClient.createWorkLog(this.timer)
+    await this.plugin.jiraClient.createWorkLog(this.timer.id, this.timer)
 
     this.timer.timerManager.deleteById(this.timer.id)
     this.close()

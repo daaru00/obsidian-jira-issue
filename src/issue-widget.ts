@@ -1,6 +1,7 @@
 import JiraIssuePlugin from './main'
 import {JiraIssue} from './lib/jira'
-import { ButtonComponent } from 'obsidian';
+import { ButtonComponent } from 'obsidian'
+import TransitionModal from './transition-modal';
 
 export default class IssueWidget {
   el: HTMLElement;
@@ -8,6 +9,8 @@ export default class IssueWidget {
   jiraIssueKey: string;
   issue: JiraIssue;
   timerControlContainer: HTMLDivElement;
+  issueTransitions: import("/home/fabio/Obsidian/Bitbull/.obsidian/plugins/obsidian-jira-issue/src/lib/jira").JiraIssueTransitions[];
+  transitionControlContainer: HTMLDivElement;
 
   constructor(plugin: JiraIssuePlugin, el: HTMLElement) {
     this.plugin = plugin
@@ -45,6 +48,9 @@ export default class IssueWidget {
     this.el.empty()
     this.showIssueDetails()
     this.showTimeStats()
+
+    await this.loadIssueTransitions()
+
     this.showTimerControl()
 
     //await this.loadTimeSpent()
@@ -64,10 +70,10 @@ export default class IssueWidget {
       text: `${this.issue.key}`
     })
     subheader.createSpan({
-      text: '\u2022'
+      text: `${this.issue.project.name}`
     })
     subheader.createSpan({
-      text: `${this.issue.project.name}`
+      text: `${this.issue.status}`
     })
   }
 
@@ -124,6 +130,39 @@ export default class IssueWidget {
           timer.save()
         })
     }
+  }
+
+  async loadIssueTransitions(): Promise<void> {
+    try {
+      this.issueTransitions = await this.plugin.jiraClient.getIssueTransitions(this.jiraIssueKey)
+    } catch ({ errorMessages }) {
+      return
+    }
+
+    if (this.issueTransitions.length === 0) {
+      return
+    }
+
+    this.showTransitionControl()
+  }
+
+  showTransitionControl(): void {
+    if (!this.issue) {
+      return
+    }
+    
+    if (!this.transitionControlContainer) {
+      this.transitionControlContainer = this.el.createDiv({ cls: ['jira-issue-transition-control'] })
+    } else {
+      this.transitionControlContainer.empty()
+    }
+
+    new ButtonComponent(this.transitionControlContainer)
+      .setButtonText("change status")
+      .onClick(() => {
+        const modal = new TransitionModal(this.plugin, this.jiraIssueKey)
+        modal.open()
+      })
   }
 
   async loadTimeSpent(): Promise<void> {

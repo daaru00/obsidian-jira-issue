@@ -6,7 +6,7 @@ import JiraIssueSettingTab from './settings-tab'
 import IssueWidget from './issue-widget'
 import TimerManager from './lib/timer'
 import TimerView, { VIEW_TYPE_OUTPUT } from './timer-view'
-import SaveModal from './save-model'
+import SaveModal from './save-modal'
 
 export default class JiraIssuePlugin extends Plugin {
 	settings: JiraIssuePluginSettings
