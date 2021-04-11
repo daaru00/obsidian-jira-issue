@@ -15,7 +15,6 @@
     background-color: var(--background-primary-alt);
     border-radius: 5px;
     padding: 0.4em;
-    height: 100%;
 }
 .jira-issue.in-error {
     color: var(--text-error);
@@ -41,13 +40,4 @@
 .jira-issue-time-bar {
     height: 100%;
     background-color: var(--text-accent-hover);
-}
-
-.jira-issue-timer-control { 
-    display: inline-block;
-    width: 100%;
-}
-
-.jira-issue-timer-control button {
-    float: right;
 }

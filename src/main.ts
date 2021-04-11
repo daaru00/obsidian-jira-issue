@@ -36,6 +36,7 @@ export default class JiraIssuePlugin extends Plugin {
 			
 			const issueWidget = issueWidgetContainer.createDiv()
 			issueWidget.addClass('jira-issue')
+			issueWidget.addClass('timer-tracker-compatible')
 
 			new IssueWidget(this, issueWidget)
 				.setIssueIdentifier(key)

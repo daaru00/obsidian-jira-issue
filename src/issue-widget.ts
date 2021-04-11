@@ -22,6 +22,8 @@ export default class IssueWidget {
   }
 
   setIssueIdentifier(jiraIssueKey: string): IssueWidget {
+    this.el.dataset.identifier = jiraIssueKey
+
     this.el.empty()
     this.el.innerHTML = 'loading..'
 
@@ -44,7 +46,7 @@ export default class IssueWidget {
     this.showIssueDetails()
     this.showTimeStats()
 
-    await this.loadIssueTransitions()
+    //await this.loadIssueTransitions()
   }
 
   showIssueDetails(): void {
