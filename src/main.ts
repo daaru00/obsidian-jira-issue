@@ -6,6 +6,7 @@ import JiraIssueSettingTab from './settings-tab'
 import IssueWidget from './issue-widget'
 import TimerManager from './lib/timer'
 import TimerView, { VIEW_TYPE_OUTPUT } from './timer-view'
+import SaveModal from './save-model'
 
 export default class JiraIssuePlugin extends Plugin {
 	settings: JiraIssuePluginSettings
@@ -59,6 +60,9 @@ export default class JiraIssuePlugin extends Plugin {
 
 	initTimerManager(): void {
 		this.timeManager = new TimerManager()
+		this.timeManager.on('timer-save', (event) => {
+			new SaveModal(this, event.detail.timer).open()
+		})
 	}
 
 	initJiraClient(): void {
@@ -72,8 +76,6 @@ export default class JiraIssuePlugin extends Plugin {
 		container.addClass('jira-issues-grid')
 
 		const issues = content.split(os.EOL).filter(key => key.trim().length > 0)
-		console.log(issues);
-		
 		for (const key of issues) {
 			const issueWidgetContainer = container.createDiv()
 			issueWidgetContainer.addClass('jira-issue-grid-item')

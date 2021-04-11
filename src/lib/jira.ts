@@ -2,6 +2,7 @@
 import JiraIssuePluginSettings from '../settings'
 import { request } from 'https'
 import { join } from 'path'
+import { Timer } from './timer'
 
 export interface JiraIssue {
   id: string;
@@ -89,7 +90,6 @@ export default class JiraClient {
 
   async getIssueDetails(jiraIssueIdOrKey: string): Promise<JiraIssue> {
     const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey)+'?fields=id,key,summary,timetracking,project')
-    console.log(res);
 
     return {
       id: res.id,
@@ -116,5 +116,9 @@ export default class JiraClient {
       startedAt: worklog.started ? new Date(worklog.started) : null,
       updatedAt: worklog.updated ? new Date(worklog.updated) : null
     }))
+  }
+
+  async createWorkLog(timer: Timer): Promise<void> {
+    console.log(timer);
   }
 }

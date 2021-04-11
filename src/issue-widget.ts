@@ -16,6 +16,7 @@ export default class IssueWidget {
     this.plugin.timeManager.on('timer-paused', this.showTimerControl.bind(this))
     this.plugin.timeManager.on('timer-resumed', this.showTimerControl.bind(this))
     this.plugin.timeManager.on('timer-reset', this.showTimerControl.bind(this))
+    this.plugin.timeManager.on('timer-deleted', this.showTimerControl.bind(this))
   }
 
   getIssueIdentifier(): string {
@@ -97,7 +98,6 @@ export default class IssueWidget {
         .onClick(() => {
           const timer = this.plugin.timeManager.createNew(this.jiraIssueKey)
           timer.start()
-          this.showTimerControl()
         })
     } else {
       if (timer.isRunning) {
@@ -105,21 +105,23 @@ export default class IssueWidget {
           .setButtonText("pause")
           .onClick(() => {
             timer.pause()
-            this.showTimerControl()
           })
       } else {
         new ButtonComponent(this.timerControlContainer)
           .setButtonText("resume")
           .onClick(() => {
             timer.resume()
-            this.showTimerControl()
           })
       }
       new ButtonComponent(this.timerControlContainer)
         .setButtonText("reset")
         .onClick(() => {
           timer.reset()
-          this.showTimerControl()
+        })
+      new ButtonComponent(this.timerControlContainer)
+        .setButtonText("save")
+        .onClick(() => {
+          timer.save()
         })
     }
   }

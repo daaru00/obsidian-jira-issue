@@ -9,7 +9,7 @@ function getTimestamp(date?: Date): number {
   return Math.trunc(date.getTime() / 1000)
 }
 
-class Timer {
+export class Timer {
   id: string
   time_entry_id: string
   issue_id: string
@@ -33,7 +33,7 @@ class Timer {
     this.startedAt = new Date()
     this.isRunning = true
 
-    this.timerManager.emit('timer-start', { id: this.id })
+    this.timerManager.emit('timer-start', { timer: this })
   }
 
   reset(): void {
@@ -42,7 +42,7 @@ class Timer {
     this.resumedAt = null
     this.durationAcc = 0
 
-    this.timerManager.emit('timer-reset', { id: this.id })
+    this.timerManager.emit('timer-reset', { timer: this })
   }
 
   restart(): void {
@@ -61,7 +61,7 @@ class Timer {
     this.pausedAt = new Date()
     this.isRunning = false
 
-    this.timerManager.emit('timer-paused', { id: this.id })
+    this.timerManager.emit('timer-paused', { timer: this })
   }
 
   resume(): void {
@@ -75,7 +75,7 @@ class Timer {
     this.resumedAt = new Date()
     this.isRunning = true
 
-    this.timerManager.emit('timer-resumed', { id: this.id })
+    this.timerManager.emit('timer-resumed', { timer: this })
   }
 
   updateDurationAccumulator(): void {
@@ -104,8 +104,9 @@ class Timer {
     this.resumedAt = this.pausedAt
   }
 
-  approximateDuration(seconds: number) {
+  getApproximatedDuration(seconds: number): number {
     let duration = this.getDuration()
+
     const approximationEdge = seconds / 2
     const leftHours = duration % seconds
   
@@ -119,7 +120,7 @@ class Timer {
       duration = seconds
     }
   
-    this.forceDuration(parseFloat(duration.toFixed(2)))
+    return Math.ceil(duration)
   }
 
   getDuration(): number {
@@ -175,6 +176,19 @@ class Timer {
 
     return 0
   }
+
+  save(): void {
+    this.pause()
+    this.timerManager.emit('timer-save', { timer: this })
+  }
+}
+
+class TimerEventDetail {
+  timer: Timer
+}
+
+class TimerEvent extends Event {
+  detail: TimerEventDetail
 }
 
 export default class TimerManager {
@@ -209,15 +223,24 @@ export default class TimerManager {
     }
   }
 
+  deleteById(id: string): void {
+    const index = this.timers.findIndex(timer => timer.id === id)
+    if (index === -1) {
+      throw 'Timer Identifier Not Found'
+    }
+    this.timers.splice(index, 1)
+    this.emit('timer-deleted', { timer: { id } })
+  }
+
   deleteAll(): void {
     this.timers = []
   }
 
-  on(event: string, callback: (event: Event) => void): void {
+  on(event: string, callback: (event: TimerEvent) => void): void {
     this.eventBus.addEventListener(event, callback)
   }
 
-  emit(event: string, detail: unknown = {}): void {
-    this.eventBus.dispatchEvent(new CustomEvent(event, { detail }))
+  emit(event: string, data: unknown = {}): void {
+    this.eventBus.dispatchEvent(new CustomEvent(event, { detail: data}))
   }
 }

@@ -28,10 +28,8 @@ export default class TimerView extends ItemView {
 	async onOpen(): Promise<void> {
 		const { containerEl } = this;
 		containerEl.empty();
-
     this.timerList = containerEl.createEl('ul')
-
-    this.registerInterval(window.setInterval(this.drawTimerList.bind(this), 1000))
+    this.registerInterval(window.setInterval(this.drawTimerList.bind(this), 500))
 	}
 
   drawTimerList(): void {
