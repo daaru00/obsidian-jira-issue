@@ -2,7 +2,6 @@
 import JiraIssuePluginSettings from '../settings'
 import { request } from 'https'
 import { join } from 'path'
-import { Timer } from './timer'
 
 export interface JiraIssue {
   id: string;
@@ -126,28 +125,6 @@ export default class JiraClient {
       transition: {
         id: transitionId
       }
-    })
-  }
-
-  async createWorkLog(jiraIssueIdOrKey: string, timer: Timer, comment?: string): Promise<void> {
-    await this.callApi('POST', join('issue', jiraIssueIdOrKey, 'worklog'), {
-      timeSpentSeconds: timer.getDuration(),
-      started: timer.startedAt,
-      comment: comment ? {
-        type: "doc",
-        version: 1,
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                text: comment,
-                type: "text"
-              }
-            ]
-          }
-        ]
-      } : undefined,
     })
   }
 }

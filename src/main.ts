@@ -5,6 +5,12 @@ import JiraIssuePluginSettings, { DEFAULT_SETTINGS } from './settings'
 import JiraIssueSettingTab from './settings-tab'
 import IssueWidget from './issue-widget'
 
+interface OnTimerSaveEvent {
+	detail: {
+		id: string
+	}
+}
+
 export default class JiraIssuePlugin extends Plugin {
 	settings: JiraIssuePluginSettings
 	jiraClient: JiraClient
@@ -38,9 +44,20 @@ export default class JiraIssuePlugin extends Plugin {
 			issueWidget.addClass('jira-issue')
 			issueWidget.addClass('timer-tracker-compatible')
 
+			issueWidget.addEventListener('timersave', this.onSaveTimer.bind(this))
+
 			new IssueWidget(this, issueWidget)
 				.setIssueIdentifier(key)
 		}
+	}
+
+	async onSaveTimer(event: OnTimerSaveEvent): Promise<void> {
+		const timerElement = window.document.querySelector('.timer-control-container[data-identifier="'+event.detail.id+'"]')
+		if (!timerElement) {
+			return
+		}
+
+		timerElement.dispatchEvent(new CustomEvent('timersaved', event))
 	}
 
 	async loadSettings(): Promise<void> {
