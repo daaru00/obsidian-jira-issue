@@ -183,21 +183,17 @@ export class Timer {
   }
 }
 
-class TimerEventDetail {
-  timer: Timer
-}
-
-class TimerEvent extends Event {
-  detail: TimerEventDetail
+interface TimerEvent {
+  timer?: Timer
 }
 
 export default class TimerManager {
   timers: Timer[]
-  eventBus: Comment
+  subscriptions: Map<string, [(event: TimerEvent) => void]>
 
   constructor() {
     this.timers = []
-    this.eventBus = window.document.createComment('jira-timer-event-bus')
+    this.subscriptions = new Map()
   }
 
   getAll(): Timer[] {
@@ -237,10 +233,22 @@ export default class TimerManager {
   }
 
   on(event: string, callback: (event: TimerEvent) => void): void {
-    this.eventBus.addEventListener(event, callback)
+    if (!this.subscriptions.has(event)) {
+      this.subscriptions.set(event, [callback])
+      return
+    }
+    const subscriptions = this.subscriptions.get(event)
+    subscriptions.push(callback)
+    this.subscriptions.set(event, subscriptions)
   }
 
   emit(event: string, data: unknown = {}): void {
-    this.eventBus.dispatchEvent(new CustomEvent(event, { detail: data}))
+    if (!this.subscriptions.has(event)) {
+      return
+    }
+    const subscriptions = this.subscriptions.get(event)
+    for (const subscription of subscriptions) {
+      subscription(data)
+    }
   }
 }

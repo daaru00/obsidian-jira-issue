@@ -61,7 +61,7 @@ export default class JiraIssuePlugin extends Plugin {
 	initTimerManager(): void {
 		this.timeManager = new TimerManager()
 		this.timeManager.on('timer-save', (event) => {
-			new SaveModal(this, event.detail.timer).open()
+			new SaveModal(this, event.timer).open()
 		})
 	}
 
