@@ -55,8 +55,9 @@ export default class IssueWidget {
       return
     }
 
-    this.el.createSpan({
-      text: `${this.issue.summary}`
+    this.el.createDiv({
+      text: `${this.issue.summary}`,
+      cls: ['jira-issue-title']
     })
 
     const subheader = this.el.createDiv({ cls: ['jira-issue-details'] })
@@ -81,10 +82,14 @@ export default class IssueWidget {
 
   showTimeStats(): void {
     const container = this.el.createDiv({ cls: ['jira-issue-time-bar-container'] })
-    const { originalEstimateSeconds, timeSpentSeconds } = this.issue.timeTracking
-    const percentage = originalEstimateSeconds / (100 * timeSpentSeconds)
-
     const bar = container.createDiv({ cls: ['jira-issue-time-bar'] })
+
+    const { originalEstimateSeconds, timeSpentSeconds } = this.issue.timeTracking
+    if (!originalEstimateSeconds || !timeSpentSeconds) {
+      return
+    }
+
+    const percentage = timeSpentSeconds / originalEstimateSeconds * 100
     bar.style.width = Math.ceil(percentage) + '%'
   }
 
