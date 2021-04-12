@@ -1,7 +1,8 @@
 import JiraIssuePlugin from './main'
 import {JiraIssue} from './lib/jira'
 import { ButtonComponent } from 'obsidian'
-import TransitionModal from './transition-modal';
+import TransitionModal from './transition-modal'
+import * as path from 'path'
 
 export default class IssueWidget {
   el: HTMLElement;
@@ -67,6 +68,14 @@ export default class IssueWidget {
     })
     subheader.createSpan({
       text: `${this.issue.status}`
+    })
+    subheader.createEl('a', {
+      attr: {
+        rel: 'noopener',
+        target: '_blank',
+        href: path.join('https://'+this.plugin.settings.host, 'browse', this.issue.key),
+      },
+      cls: ['external-link']
     })
   }
 
