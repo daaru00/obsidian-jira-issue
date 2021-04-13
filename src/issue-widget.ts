@@ -16,6 +16,7 @@ export default class IssueWidget {
   constructor(plugin: JiraIssuePlugin, el: HTMLElement) {
     this.plugin = plugin
     this.el = el
+    this.el.addEventListener('refresh', this.loadIssue.bind(this))
   }
 
   getIssueIdentifier(): string {

@@ -23,6 +23,15 @@ export default class JiraIssuePlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor('jira', this.issueBlockProcessor.bind(this))
 
 		this.initJiraClient()
+
+		this.addCommand({
+			id: 'app:refresh-jira-issues',
+			name: 'Refresh Jira issues',
+			callback: () => {
+				document.querySelectorAll('.jira-issue').forEach(issue => issue.dispatchEvent(new CustomEvent('refresh')))
+			},
+			hotkeys: []
+		})
 	}
 
 	initJiraClient(): void {
