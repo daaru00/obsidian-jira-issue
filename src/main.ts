@@ -4,12 +4,8 @@ import JiraClient from './lib/jira'
 import JiraIssuePluginSettings, { DEFAULT_SETTINGS } from './settings'
 import JiraIssueSettingTab from './settings-tab'
 import IssueWidget from './issue-widget'
-
-interface OnTimerSaveEvent {
-	detail: {
-		id: string
-	}
-}
+import WorkLogSaveModal from './worklog-save-modal'
+import { OnTimerSaveEvent } from './types'
 
 export default class JiraIssuePlugin extends Plugin {
 	settings: JiraIssuePluginSettings
@@ -61,6 +57,10 @@ export default class JiraIssuePlugin extends Plugin {
 	}
 
 	async onSaveTimer(event: OnTimerSaveEvent): Promise<void> {
+		new WorkLogSaveModal(this, event).open()
+	}
+
+	onTimerSaved(event: OnTimerSaveEvent): void {
 		const timerElement = window.document.querySelector('.timer-control-container[data-identifier="'+event.detail.id+'"]')
 		if (!timerElement) {
 			return

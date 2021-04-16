@@ -83,15 +83,22 @@ export default class IssueWidget {
 
   showTimeStats(): void {
     const container = this.el.createDiv({ cls: ['jira-issue-time-bar-container'] })
-    const bar = container.createDiv({ cls: ['jira-issue-time-bar'] })
+    const timeBar = container.createDiv({ cls: ['jira-issue-time-bar'] })
 
     const { originalEstimateSeconds, timeSpentSeconds } = this.issue.timeTracking
     if (!originalEstimateSeconds || !timeSpentSeconds) {
       return
     }
 
-    const percentage = timeSpentSeconds / originalEstimateSeconds * 100
-    bar.style.width = Math.ceil(percentage) + '%'
+    const percentage = Math.ceil(timeSpentSeconds / originalEstimateSeconds * 100)
+    if (percentage <= 100) {
+      timeBar.style.width = percentage + '%'
+    } else {
+      timeBar.style.width = '100%'
+
+      const timeBarOverflow = timeBar.createDiv({ cls: ['jira-issue-time-bar-overflow'] })
+      timeBarOverflow.style.width = (percentage - 100) + '%'
+    }
   }
 
   async loadIssueTransitions(): Promise<void> {

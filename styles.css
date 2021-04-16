@@ -1,6 +1,7 @@
 .jira-issues-grid {
     display: flex;
     flex-wrap: wrap;
+    margin: 0 -1em;
 }
 
 .jira-issue-grid-item {
@@ -43,8 +44,26 @@
     margin-top: 0.2em;
 }
 
-.jira-issue-time-bar {
+.jira-issue-time-bar, .jira-issue-time-bar-overflow {
     height: 100%;
     width: 0;
+}
+
+.jira-issue-time-bar {
     background-color: var(--text-accent-hover);
+}
+
+.jira-issue-time-bar-overflow {
+    background-color: var(--text-error-hover);
+}
+
+.jira-modal-commands button {
+    float: right;
+}
+
+.jira-modal-title {
+    max-width: 20em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

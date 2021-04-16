@@ -41,6 +41,24 @@ export interface JiraWorkLog {
   updatedAt: Date|null;
 }
 
+function formatDoc(content: string) {
+  return {
+    "version": 1,
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": content
+          }
+        ]
+      }
+    ]
+  }
+}
+
 export default class JiraClient {
   settings: JiraIssuePluginSettings
 
@@ -126,5 +144,23 @@ export default class JiraClient {
         id: transitionId
       }
     })
+  }
+
+  async saveIssueWorkLog(jiraIssueIdOrKey: string, timeSpent: string, startedAt: Date, timeRemaining: string, comment?: string): Promise<void> {
+    let data: any = {
+      comment: formatDoc(comment),
+      timeSpent,
+      started: startedAt.toISOString(),
+    }
+
+    if (timeRemaining.trim() !== '' && timeRemaining !== '0m') {
+      data = {
+        ...data,
+        adjustEstimate: 'new',
+        newEstimate: timeRemaining
+      }
+    }
+
+    await this.callApi('POST', join('issue', jiraIssueIdOrKey, 'worklog?notifyUsers=false'), data)
   }
 }

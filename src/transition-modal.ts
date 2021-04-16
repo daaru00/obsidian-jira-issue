@@ -15,15 +15,28 @@ export default class TransitionModal extends Modal {
     this.contentEl.empty()
     
     const transitions = await this.plugin.jiraClient.getIssueTransitions(this.issueIdOrKey)
+    if (transitions.length === 0) {
+      this.contentEl.createEl('h2', 'No available transitions found')
+      return
+    }
+    
     const dropdown = new DropdownComponent(this.contentEl)
     for (const transition of transitions) {
       dropdown.addOption(transition.id, transition.name)
     }
 
-    new ButtonComponent(this.contentEl)
+    const commandContainer = this.contentEl.createDiv({ cls: ['jira-modal-commands'] })
+
+    new ButtonComponent(commandContainer)
       .setButtonText("change")
       .onClick(() => {
         this.saveAndClose(dropdown.getValue())
+      })
+
+    new ButtonComponent(commandContainer)
+      .setButtonText("cancel")
+      .onClick(() => {
+        this.close()
       })
   }
 
