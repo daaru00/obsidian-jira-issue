@@ -105,12 +105,6 @@ export default class TrackingSaveModal extends Modal {
           console.error(error)
         })
       })
-
-    new ButtonComponent(commandContainer)
-      .setButtonText("cancel")
-      .onClick(() => {
-        this.close()
-      })
   }
 
   async save(duration: string, timeRemaining: string, comment: string): Promise<void> {

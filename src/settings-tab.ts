@@ -15,7 +15,7 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Jira Host')
+			.setName('Jira host')
 			.setDesc('The domain host of Jira instance')
 			.addText(text => text
 				.setValue(this.plugin.settings.host)
@@ -37,7 +37,7 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 				}));
 		
 		new Setting(containerEl)
-			.setName('API Token')
+			.setName('API token')
 			.setDesc('The API token generated from Atlassian account')
 			.addText(text => {
 				text.inputEl.type = 'password'
@@ -50,7 +50,7 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 			})
 
 		new Setting(containerEl)
-			.setName('Test Credentials')
+			.setName('Test credentials')
 			.setDesc('Retrieve current logged user')
 			.addButton(button => button
 				.setButtonText("test")

@@ -57,8 +57,9 @@
     background-color: var(--text-error-hover);
 }
 
-.jira-modal-commands button {
-    float: right;
+.jira-modal-commands {
+    text-align: right;
+    padding-top: 2em;
 }
 
 .jira-modal-title {

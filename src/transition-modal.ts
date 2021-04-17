@@ -32,12 +32,6 @@ export default class TransitionModal extends Modal {
       .onClick(() => {
         this.saveAndClose(dropdown.getValue())
       })
-
-    new ButtonComponent(commandContainer)
-      .setButtonText("cancel")
-      .onClick(() => {
-        this.close()
-      })
   }
 
   async saveAndClose(transitionId: string): Promise<void> {
