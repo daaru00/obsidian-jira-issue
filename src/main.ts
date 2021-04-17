@@ -70,6 +70,7 @@ export default class JiraIssuePlugin extends Plugin {
 		}
 
 		timerElement.dispatchEvent(new CustomEvent('timersaved', event))
+		this.refreshData()
 	}
 
 	async loadSettings(): Promise<void> {
