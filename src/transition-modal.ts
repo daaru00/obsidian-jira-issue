@@ -36,6 +36,7 @@ export default class TransitionModal extends Modal {
 
   async saveAndClose(transitionId: string): Promise<void> {
     await this.plugin.jiraClient.transitionIssue(this.issueIdOrKey, transitionId)
+    this.plugin.refreshData()
     this.close()
   }
 }
