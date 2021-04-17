@@ -41,6 +41,12 @@ export interface JiraWorkLog {
   updatedAt: Date|null;
 }
 
+export interface JiraUser {
+  id: string;
+  displayName: string;
+  emailAddress: string;
+}
+
 function formatDoc(content: string) {
   return {
     "version": 1,
@@ -91,11 +97,19 @@ export default class JiraClient {
         })
 
         res.on('end', () => {
+          resData = resData.trim()
+
           if (res.statusCode < 200 || res.statusCode > 299) {
-            return reject(JSON.parse(resData))
+            let err = ''
+            try {
+              JSON.parse(resData)
+            } catch (error) {
+              err = `Status code ${res.statusCode}`
+            }
+            return reject(err)
           }
 
-          resolve(JSON.parse(resData))
+          resolve(resData ? JSON.parse(resData) : '')
         })
       })
       
@@ -109,6 +123,16 @@ export default class JiraClient {
 
       req.end()
     })    
+  }
+
+  async getUser(): Promise<JiraUser> {
+    const res = await this.callApi('GET', 'myself')
+
+    return {
+      id: 'test',
+      displayName: res.displayName,
+      emailAddress: res.emailAddress
+    }
   }
 
   async getIssueDetails(jiraIssueIdOrKey: string): Promise<JiraIssue> {

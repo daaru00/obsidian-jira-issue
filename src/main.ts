@@ -23,15 +23,18 @@ export default class JiraIssuePlugin extends Plugin {
 		this.addCommand({
 			id: 'app:refresh-jira-issues',
 			name: 'Refresh Jira issues',
-			callback: () => {
-				document.querySelectorAll('.jira-issue').forEach(issue => issue.dispatchEvent(new CustomEvent('refresh')))
-			},
+			callback: this.refreshData.bind(this),
 			hotkeys: []
 		})
 	}
 
 	initJiraClient(): void {
 		this.jiraClient = new JiraClient(this.settings)
+		this.refreshData()
+	}
+
+	refreshData(): void {
+		document.querySelectorAll('.jira-issue').forEach(issue => issue.dispatchEvent(new CustomEvent('refresh')))
 	}
 
 	async issueBlockProcessor(content: string, el: HTMLElement): Promise<void> {

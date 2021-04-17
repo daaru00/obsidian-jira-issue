@@ -38,11 +38,12 @@ export default class IssueWidget {
   async loadIssue(): Promise<void> {
     try {
       this.issue = await this.plugin.jiraClient.getIssueDetails(this.jiraIssueKey)
-    } catch ({ errorMessages }) {
-      this.el.innerHTML = errorMessages.join(' ')
+    } catch (error) {
+      this.el.innerHTML = error.errorMessages ? error.errorMessages.join(' ') : error 
       this.el.addClass('in-error')
       return
     }
+    this.el.removeClass('in-error')
 
     this.el.empty()
     this.showIssueDetails()

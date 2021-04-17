@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian'
+import { App, Notice, PluginSettingTab, Setting } from 'obsidian'
 import JiraIssuePlugin from './main'
 
 export default class JiraIssueSettingTab extends PluginSettingTab {
@@ -48,5 +48,24 @@ export default class JiraIssueSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			})
+
+		new Setting(containerEl)
+			.setName('Test Credentials')
+			.setDesc('Retrieve current logged user')
+			.addButton(button => button
+				.setButtonText("test")
+				.onClick(() => {
+					button.setDisabled(true)
+					this.plugin.jiraClient.getUser()
+					.then(user => {
+						new Notice(`Successfully logged in as ${user.displayName}`)
+					})
+					.catch(error => {
+						new Notice(`Error: ${error}`)
+					})
+					.finally(() => {
+						button.setDisabled(false)
+					})
+				}))
 	}
 }
