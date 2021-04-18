@@ -49,15 +49,15 @@ export interface JiraUser {
 
 function formatDoc(content: string) {
   return {
-    "version": 1,
-    "type": "doc",
-    "content": [
+    'version': 1,
+    'type': 'doc',
+    'content': [
       {
-        "type": "paragraph",
-        "content": [
+        'type': 'paragraph',
+        'content': [
           {
-            "type": "text",
-            "text": content
+            'type': 'text',
+            'text': content
           }
         ]
       }
@@ -82,7 +82,7 @@ export default class JiraClient {
         'Authorization': 'Basic ' + 
           Buffer.from(this.settings.email + ':' + this.settings.token).toString('base64')
       }
-    };    
+    }    
 
     return new Promise((resolve, reject) => {
       let resData = ''
@@ -93,7 +93,7 @@ export default class JiraClient {
         })
 
         res.on('error', (error) => {
-          reject(error);
+          reject(error)
         })
 
         res.on('end', () => {
@@ -114,7 +114,7 @@ export default class JiraClient {
       })
       
       req.on('error', (error) => {
-        reject(error);
+        reject(error)
       })
 
       if (['POST', 'PUT'].includes(method.toLocaleUpperCase()) && data) {

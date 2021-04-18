@@ -1,5 +1,5 @@
-import { ButtonComponent, DropdownComponent, Modal } from "obsidian";
-import JiraIssuePlugin from "./main";
+import { ButtonComponent, DropdownComponent, Modal } from 'obsidian'
+import JiraIssuePlugin from './main'
 
 export default class TransitionModal extends Modal {
   plugin: JiraIssuePlugin;
@@ -28,7 +28,7 @@ export default class TransitionModal extends Modal {
     const commandContainer = this.contentEl.createDiv({ cls: ['jira-modal-commands'] })
 
     new ButtonComponent(commandContainer)
-      .setButtonText("change")
+      .setButtonText('change')
       .onClick(() => {
         this.saveAndClose(dropdown.getValue())
       })

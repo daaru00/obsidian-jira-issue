@@ -10,7 +10,7 @@ export default class IssueWidget {
   jiraIssueKey: string;
   issue: JiraIssue;
   timerControlContainer: HTMLDivElement;
-  issueTransitions: import("/home/fabio/Obsidian/Bitbull/.obsidian/plugins/obsidian-jira-issue/src/lib/jira").JiraIssueTransitions[];
+  issueTransitions: import('/home/fabio/Obsidian/Bitbull/.obsidian/plugins/obsidian-jira-issue/src/lib/jira').JiraIssueTransitions[];
   transitionControlContainer: HTMLDivElement;
 
   constructor(plugin: JiraIssuePlugin, el: HTMLElement) {
@@ -128,7 +128,7 @@ export default class IssueWidget {
     }
 
     new ButtonComponent(this.transitionControlContainer)
-      .setButtonText("change status")
+      .setButtonText('change status')
       .onClick(() => {
         const modal = new TransitionModal(this.plugin, this.jiraIssueKey)
         modal.open()
