@@ -2,6 +2,21 @@
 
 An [Obsidian.md](https://obsidian.md/) plugin that show Jira issue details.
 
+## Requirements
+
+- A Jira instance endpoint (Cloud or Server)
+- An Atlassian account email and [API token](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/)
+
+## Installation
+
+Download zip archive from [GitHub releases page](https://github.com/daaru00/obsidian-jira-issue/releases) and extract it into `<vault>/.obsidian/plugins` directory.
+
+## Configurations
+
+In order to show issues details the plugin need to be configured with `host`, `email` and `API token` configuration.
+
+![credentials settings](./doc/imgs/jira-credentials-settings.png)
+
 ## Usage
 
 Add this code block where you want to show the issue widget:
