@@ -42,7 +42,6 @@ export interface JiraWorkLog {
 }
 
 export interface JiraUser {
-  id: string;
   displayName: string;
   emailAddress: string;
 }
@@ -80,9 +79,10 @@ export default class JiraClient {
       method: method,
       headers: {
         'Authorization': 'Basic ' + 
-          Buffer.from(this.settings.email + ':' + this.settings.token).toString('base64')
+          Buffer.from(this.settings.email + ':' + this.settings.token).toString('base64'),
+        'Content-Type': 'application/json'
       }
-    }    
+    }
 
     return new Promise((resolve, reject) => {
       let resData = ''
@@ -102,7 +102,7 @@ export default class JiraClient {
           if (res.statusCode < 200 || res.statusCode > 299) {
             let err = ''
             try {
-              JSON.parse(resData)
+              err = JSON.parse(resData)
             } catch (error) {
               err = `Status code ${res.statusCode}`
             }
@@ -118,7 +118,7 @@ export default class JiraClient {
       })
 
       if (['POST', 'PUT'].includes(method.toLocaleUpperCase()) && data) {
-        req.write(data)
+        req.write(JSON.stringify(data))
       }
 
       req.end()
@@ -129,7 +129,6 @@ export default class JiraClient {
     const res = await this.callApi('GET', 'myself')
 
     return {
-      id: 'test',
       displayName: res.displayName,
       emailAddress: res.emailAddress
     }
@@ -174,7 +173,7 @@ export default class JiraClient {
     let data: any = {
       comment: formatDoc(comment),
       timeSpent,
-      started: startedAt.toISOString(),
+      started: startedAt.toISOString().replace('Z','+0000'),
     }
 
     if (timeRemaining.trim() !== '' && timeRemaining !== '0m') {
@@ -183,7 +182,7 @@ export default class JiraClient {
         adjustEstimate: 'new',
         newEstimate: timeRemaining
       }
-    }
+    }    
 
     await this.callApi('POST', join('issue', jiraIssueIdOrKey, 'worklog?notifyUsers=false'), data)
   }
