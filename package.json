@@ -1,6 +1,6 @@
 {
     "name": "obsidian-jira-issue",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "Obsidian Plugin for Jira issue details",
     "main": "main.js",
     "scripts": {
