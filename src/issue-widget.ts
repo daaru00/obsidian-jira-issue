@@ -24,8 +24,6 @@ export default class IssueWidget {
   }
 
   setIssueIdentifier(jiraIssueKey: string): IssueWidget {
-    this.el.dataset.identifier = jiraIssueKey
-
     this.el.empty()
     this.el.innerHTML = 'loading..'
 

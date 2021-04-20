@@ -7,6 +7,15 @@ import IssueWidget from './issue-widget'
 import WorkLogSaveModal from './worklog-save-modal'
 import { OnTimerSaveEvent } from './types'
 
+const EVENT_BUS_NAME = 'jira-event-bus'
+
+declare global {
+	interface Window {
+		jiraEventBus: Comment; 
+		timeTrackerEventBus: Comment; 
+	}
+}
+
 export default class JiraIssuePlugin extends Plugin {
 	settings: JiraIssuePluginSettings
 	jiraClient: JiraClient
@@ -31,6 +40,9 @@ export default class JiraIssuePlugin extends Plugin {
 	initJiraClient(): void {
 		this.jiraClient = new JiraClient(this.settings)
 		this.refreshData()
+
+		window.jiraEventBus = document.createComment(EVENT_BUS_NAME)
+		window.jiraEventBus.addEventListener('timersave', this.onSaveTimer.bind(this))
 	}
 
 	refreshData(): void {
@@ -51,8 +63,8 @@ export default class JiraIssuePlugin extends Plugin {
 			const issueWidget = issueWidgetContainer.createDiv()
 			issueWidget.addClass('jira-issue')
 			issueWidget.addClass('timer-tracker-compatible')
-
-			issueWidget.addEventListener('timersave', this.onSaveTimer.bind(this))
+			issueWidget.dataset.identifier = key
+			issueWidget.dataset.type = 'jira'
 
 			new IssueWidget(this, issueWidget)
 				.setIssueIdentifier(key)
@@ -64,12 +76,10 @@ export default class JiraIssuePlugin extends Plugin {
 	}
 
 	onTimerSaved(event: OnTimerSaveEvent): void {
-		const timerElement = window.document.querySelector('.timer-control-container[data-identifier="'+event.detail.id+'"]')
-		if (!timerElement) {
-			return
+		if (window.timeTrackerEventBus) {
+			window.timeTrackerEventBus.dispatchEvent(new CustomEvent('timersaved', event))
 		}
-
-		timerElement.dispatchEvent(new CustomEvent('timersaved', event))
+		
 		this.refreshData()
 	}
 
@@ -81,5 +91,9 @@ export default class JiraIssuePlugin extends Plugin {
 		await this.saveData(this.settings)
 
 		this.initJiraClient()
+	}
+
+	onunload(): void {
+		delete window.jiraEventBus
 	}
 }

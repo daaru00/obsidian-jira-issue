@@ -36,9 +36,12 @@ export default class TrackingSaveModal extends Modal {
       text: `${issue.id} ${issue.summary}`,
       cls: ['jira-modal-title']
     })
-    this.contentEl.createEl('p', {
-      text: `The original estimate for this issue was ${issue.timeTracking.originalEstimate}.`
-    })
+
+    if (issue.timeTracking.originalEstimate) {
+      this.contentEl.createEl('p', {
+        text: `The original estimate for this issue was ${issue.timeTracking.originalEstimate}.`
+      })
+    }
 
     let seconds = this.event.detail.duration
     const parts = (new Date(seconds * 1000)).toISOString().substr(11, 8).split(':')
