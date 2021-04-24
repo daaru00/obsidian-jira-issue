@@ -16,6 +16,7 @@
     background-color: var(--background-primary-alt);
     border-radius: 5px;
     padding: 5px 10px 10px 10px;
+    position: relative;
 }
 
 .jira-issue.in-error {
@@ -67,4 +68,20 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.jira-issue-transition-control {
+    position: absolute;
+    text-align: right;
+    top: 0;
+    right: 0;
+}
+
+.jira-issue-transition-control button {
+    margin: 0 2px;
+    padding: 0.5em;
+}
+
+.jira-issue-details-action {
+    cursor: pointer;
 }

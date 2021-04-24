@@ -1,6 +1,5 @@
 import JiraIssuePlugin from './main'
 import {JiraIssue} from './lib/jira'
-import { ButtonComponent } from 'obsidian'
 import TransitionModal from './transition-modal'
 import * as path from 'path'
 
@@ -17,6 +16,7 @@ export default class IssueWidget {
     this.plugin = plugin
     this.el = el
     this.el.addEventListener('refresh', this.loadIssue.bind(this))
+    this.el.addClass('loading')
   }
 
   getIssueIdentifier(): string {
@@ -40,6 +40,8 @@ export default class IssueWidget {
       this.el.innerHTML = error.errorMessages ? error.errorMessages.join(' ') : error 
       this.el.addClass('in-error')
       return
+    } finally {
+      this.el.removeClass('loading')
     }
     this.el.removeClass('in-error')
 
@@ -47,7 +49,7 @@ export default class IssueWidget {
     this.showIssueDetails()
     this.showTimeStats()
 
-    //await this.loadIssueTransitions()
+    await this.loadIssueTransitions()
   }
 
   showIssueDetails(): void {
@@ -67,9 +69,14 @@ export default class IssueWidget {
     subheader.createSpan({
       text: `${this.issue.project.name}`
     })
-    subheader.createSpan({
-      text: `${this.issue.status}`
-    })
+
+    if (this.issue.status) {
+      subheader.createSpan({
+        text: `${this.issue.status}`,
+        cls: ['jira-issue-details-action']
+      }).onclick = this.openTransitionModal.bind(this)
+    }
+
     subheader.createEl('a', {
       attr: {
         rel: 'noopener',
@@ -84,12 +91,17 @@ export default class IssueWidget {
     const container = this.el.createDiv({ cls: ['jira-issue-time-bar-container'] })
     const timeBar = container.createDiv({ cls: ['jira-issue-time-bar'] })
 
-    const { originalEstimateSeconds, timeSpentSeconds } = this.issue.timeTracking
-    if (!originalEstimateSeconds || !timeSpentSeconds) {
-      return
+    const { originalEstimateSeconds, timeSpentSeconds, remainingEstimateSeconds } = this.issue.timeTracking
+    
+    let percentage = 0 
+    if (!remainingEstimateSeconds && originalEstimateSeconds) {
+      percentage = Math.ceil((timeSpentSeconds || 0) / originalEstimateSeconds * 100)
+    } else if (remainingEstimateSeconds === 0) {
+      percentage = 100
+    } else if (timeSpentSeconds && remainingEstimateSeconds) {
+      percentage = Math.ceil(timeSpentSeconds / (timeSpentSeconds + remainingEstimateSeconds) * 100)
     }
 
-    const percentage = Math.ceil(timeSpentSeconds / originalEstimateSeconds * 100)
     if (percentage <= 100) {
       timeBar.style.width = percentage + '%'
     } else {
@@ -110,26 +122,13 @@ export default class IssueWidget {
     if (this.issueTransitions.length === 0) {
       return
     }
-
-    this.showTransitionControl()
   }
 
-  showTransitionControl(): void {
+  openTransitionModal(): void {
     if (!this.issue) {
       return
     }
     
-    if (!this.transitionControlContainer) {
-      this.transitionControlContainer = this.el.createDiv({ cls: ['jira-issue-transition-control'] })
-    } else {
-      this.transitionControlContainer.empty()
-    }
-
-    new ButtonComponent(this.transitionControlContainer)
-      .setButtonText('change status')
-      .onClick(() => {
-        const modal = new TransitionModal(this.plugin, this.jiraIssueKey)
-        modal.open()
-      })
+    new TransitionModal(this.plugin, this.jiraIssueKey).open()
   }
 }
