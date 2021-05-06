@@ -66,9 +66,11 @@ function formatDoc(content: string) {
 
 export default class JiraClient {
   settings: JiraIssuePluginSettings
+  queue: Promise<any>
 
   constructor(settings: JiraIssuePluginSettings) {
     this.settings = settings
+    this.queue = Promise.resolve()
   }
 
   async callApi(method: string, path: string, data: any = {}): Promise<any> {
@@ -125,6 +127,10 @@ export default class JiraClient {
     })    
   }
 
+  async queueApi(method: string, path: string, data: any = {}): Promise<any> {
+    return await this.queue.then(() => this.callApi(method, path, data))
+  }
+
   async getUser(): Promise<JiraUser> {
     const res = await this.callApi('GET', 'myself')
 
@@ -135,7 +141,7 @@ export default class JiraClient {
   }
 
   async getIssueDetails(jiraIssueIdOrKey: string): Promise<JiraIssue> {
-    const res = await this.callApi('GET', join('issue', jiraIssueIdOrKey)+'?fields=id,key,summary,timetracking,project,status')
+    const res = await this.queueApi('GET', join('issue', jiraIssueIdOrKey)+'?fields=id,key,summary,timetracking,project,status')
     
     return {
       id: res.id,
